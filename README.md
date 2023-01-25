@@ -171,4 +171,4 @@ Some additional flags that can be used while preparation are:
    
    <img src="images/d1_openlane_synthesis.jpg">
 
-**From the highlighted numbers in the above image, the flop ratio of the synthesized design is 0.1084 and the buffer ratio is 0.111.**
+**DAY-1 LAB TASK: From the highlighted numbers in the above image, the flop ratio of the synthesized design is 0.1084 and the buffer ratio is 0.111.**
