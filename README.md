@@ -117,7 +117,7 @@ Application software like Microsoft word can run on the hardware with the Instru
 
 All the Process Design Kits (PDK) are listed under the `pdks/` directory. Along with the `Sky130A` which we are using, some other open-source PDKs and other related files are also available in the directory. The location of the PDK directory is given of `$PDK_ROOT` variable.
 
-   <img src="images/d1_pdk_directory_structure.JPG">
+   <img src="images/d1_pdk_directory_structure.jpg">
   
  ### What is OpenLANE
    [OpenLANE](https://github.com/efabless/openlane) is an automated RTL to GDSII flow which includes various open-source components such as OpenROAD, Yosys, Magic, Fault, Netgen, SPEF-Extractor. It also facilitates to add custom design exploration and optimization scripts.
@@ -183,7 +183,7 @@ Some additional flags that can be used while preparation are:
 <br />`-tag <name-for-current-run>` - All the files generated during the flow will be stored in a directory named `<name-for-current-run>`
 <br />`-overwrite` - If a directory name mentioned in `-tag` already exists, it will be overwritten.
 
-   <img src="images/d1_openlane_design_prep.JPG"> 
+   <img src="images/d1_openlane_design_prep.jpg"> 
    
    During the design preparation the technology LEF and cell LEF files are merged together to obtain a `merged.lef` file. The LEF file contains information like the layer information, set of design rules, information about each standard cell which is required for place and route. 
     
@@ -192,7 +192,7 @@ Some additional flags that can be used while preparation are:
    
     run_synthesis
    
-   <img src="images/d1_openlane_synthesis.JPG">
+   <img src="images/d1_openlane_synthesis.jpg">
 
 **From the highlighted numbers in the above image, the flop ratio of the synthesized design is 0.1084 and the buffer ratio is 0.111.**
 
