@@ -37,7 +37,12 @@ This repository contains all the information studied and created during the [Adv
     - [Characterizing the Cell's Slew rate and Propagation delay](#characterizing-the-cells-slew-rate-and-propagation-delay)
 - [Day 4](#day-4)
   - [Pre-layout Timing Analysis and Importance of Good Clock Tree](#pre-layout-timing-analysis-and-importance-of-good-clock-tree)
-  -
+  - [CTS Using TritonCTS](#cts-using-tritoncts)
+- [Day 5](#day-5)
+  - [Generating Power Distribution Network](#generating-power-distribution-network)
+  - [Routing Using FastRoute and TritonRoute](#routing-using-fastroute-and-tritonroute)
+- [References](#references)
+- [Acknowledgements](#acknowledgements)
 
 # Introduction To RTL to GDSII Flow
 
@@ -53,7 +58,7 @@ The RTL to GSDII flow consists of following steps:
 - Routing (Global and Detailed)
 - SPEF Extraction
 
-<img src="images/PD_Flow.png">
+  ![](images/PD_Flow.png)
 
 All the steps are further discussed in detail in the repository.
 
@@ -94,7 +99,7 @@ During the Physical Designing, one will come across multiple terminologies that 
 - Core: It is the actual area of the IC where the logic resides.
 - Pads: These are the interfaces between the internal signals of a chip and the external pins. Wire bonds run between the pads and the external pins.
 
-  <img src="images/d1_qfn_package.png">
+  ![](images/d1_qfn_package.png)
 
 ### Introduction To RISC-V
 
@@ -109,7 +114,7 @@ RISC-V is a new ISA that's available under open, free and non-restrictive licenc
 
 Application software like Microsoft word can run on the hardware with the Instruction Set as the main interface. To understand more about this, the below image shows the transition from Application software -> Compiler -> Assembler -> Instructions in binary as specified by the ISA -> Executed on an RTL -> RTL to Chip Layout process is the Physical Design.
 
-<img src="images/d1_apps_to_hardware.png">
+![](images/d1_apps_to_hardware.png)
 
 ## SoC Design and OpenLANE
 
@@ -117,15 +122,16 @@ Application software like Microsoft word can run on the hardware with the Instru
 
 All the Process Design Kits (PDK) are listed under the `pdks/` directory. Along with the `Sky130A` which we are using, some other open-source PDKs and other related files are also available in the directory. The location of the PDK directory is given of `$PDK_ROOT` variable.
 
-   <img src="images/d1_pdk_directory_structure.jpg">
-  
- ### What is OpenLANE
-   [OpenLANE](https://github.com/efabless/openlane) is an automated RTL to GDSII flow which includes various open-source components such as OpenROAD, Yosys, Magic, Fault, Netgen, SPEF-Extractor. It also facilitates to add custom design exploration and optimization scripts.
-   The detailed diagram of the OpenLANE architecture is shown below:
-   
-   <img src="images/openlane_flow.png">
-   
-   OpenLANE flow consists of several stages. By default all flow steps are run in sequence. Each stage may consist of multiple sub-stages. OpenLANE can also be run interactively as shown here.
+![](images/d1_pdk_directory_structure.jpg)
+
+### What is OpenLANE
+
+[OpenLANE](https://github.com/efabless/openlane) is an automated RTL to GDSII flow which includes various open-source components such as OpenROAD, Yosys, Magic, Fault, Netgen, SPEF-Extractor. It also facilitates to add custom design exploration and optimization scripts.
+The detailed diagram of the OpenLANE architecture is shown below:
+
+![](images/openlane_flow.png)
+
+OpenLANE flow consists of several stages. By default all flow steps are run in sequence. Each stage may consist of multiple sub-stages. OpenLANE can also be run interactively as shown here.
 
 1. Synthesis
    1. `yosys` - Performs RTL synthesis
@@ -167,7 +173,7 @@ A custom shell script or commands can be generated to make the task simpler.
 - OpenLANE supports two modes of operation: interactive and autonomous.
 - To use interactive mode use `-interactive` flag with `./flow.tcl`
 
-   <img src="images/d1_openlane_invoke.png">
+  ![](images/d1_openlane_invoke.png)
 
 ### Design Preparation
 
@@ -183,16 +189,17 @@ Some additional flags that can be used while preparation are:
 <br />`-tag <name-for-current-run>` - All the files generated during the flow will be stored in a directory named `<name-for-current-run>`
 <br />`-overwrite` - If a directory name mentioned in `-tag` already exists, it will be overwritten.
 
-   <img src="images/d1_openlane_design_prep.jpg"> 
-   
-   During the design preparation the technology LEF and cell LEF files are merged together to obtain a `merged.lef` file. The LEF file contains information like the layer information, set of design rules, information about each standard cell which is required for place and route. 
-    
- ### Design Synthesis and Results
-   The first step in OpenLANE flow is RTL Synthesis of the design loaded. This is done using the following command.
-   
+![](images/d1_openlane_design_prep.jpg)
+
+During the design preparation the technology LEF and cell LEF files are merged together to obtain a `merged.lef` file. The LEF file contains information like the layer information, set of design rules, information about each standard cell which is required for place and route.
+
+### Design Synthesis and Results
+
+The first step in OpenLANE flow is RTL Synthesis of the design loaded. This is done using the following command.
+
     run_synthesis
-   
-   <img src="images/d1_openlane_synthesis.jpg">
+
+![](images/d1_openlane_synthesis.jpg)
 
 **From the highlighted numbers in the above image, the flop ratio of the synthesized design is 0.1084 and the buffer ratio is 0.111.**
 
@@ -204,7 +211,7 @@ In order to generate a netlist without timing violations, we can set the synthes
 
 After issuing the above commands, the synthesized netlist has zero worst negative slack and zero total negative slack but with an increased chip area (209181.872000 database units^2) as depicted below:
 
-   <img src="images/zero_slack_synthesis.png">
+![](images/zero_slack_synthesis.png)
 
 **NOTE:** Database Units in the OpenLANE flow are 1000 microns.
 
@@ -235,17 +242,15 @@ Floorplanning in OpenLANE is done using the following commands.
 
 Successful floorplanning gives a `def` file as output. This file contains the die area and placement of standard cells.
 
-   <img src="images/d2_floorplan_def.png">
- 
- ### Review Floorplan Layout in Magic
-   Magic Layout Tool is used for visualizing the layout after floorplan. In order to view floorplan in Magic, following three files are required:
-    1. Technology File (`sky130A.tech`)
-    2. Merged LEF file (`merged.lef`)
-    3. DEF File
-    
-   <img src="images/d2_floorplan_invoke_magic_cmd.png">
-   <img src="images/d2_floorplan_magic.jpg">
-   <img src="images/d2_floorplan_magic_expand.jpg">
+![](images/d2_floorplan_def.png)
+
+### Review Floorplan Layout in Magic
+
+Magic Layout Tool is used for visualizing the layout after floorplan. In order to view floorplan in Magic, following three files are required: 1. Technology File (`sky130A.tech`) 2. Merged LEF file (`merged.lef`) 3. DEF File
+
+![](images/d2_floorplan_invoke_magic_cmd.png)
+![](images/d2_floorplan_magic.jpg)
+![](images/d2_floorplan_magic_expand.jpg)
 
 ## Placement
 
@@ -266,17 +271,17 @@ The DEF file created during floorplan is used as an input to placement.
 
 Placement is carried out as an iterative process till the value of overflow converges close to 0 as shown in the below figure.
 
-<img src="images/global_placement.png">
+![](images/global_placement.png)
 
 **Placement looks like:**
 
-<img src="images/placement_capture.png">
+![](images/placement_capture.png)
 
 So these many standard cells where in the bottom left corner in the initial layout of the floorplan which are now placed in our floorplan.
 
 **Zoom view of Placement of the Standard Cells**
 
-<img src="images/placement_zoom_view.png">
+![](images/placement_zoom_view.png)
 
 **NOTE:** The power distribution network gets created during floorplan but in OpenFLOW right now the order is little different, the floorplan does not create the power distribution network, it is done Post CTS (Clock Tree Synthesis).
 
@@ -286,7 +291,7 @@ So these many standard cells where in the bottom left corner in the initial layo
 
 The Standard cell design flow can be summarized by the below picture:
 
-<img src="images/cell_design_flow.png">
+![](images/cell_design_flow.png)
 
 **Library and User_defined Specs**
 
@@ -304,7 +309,7 @@ The Standard cell design flow can be summarized by the below picture:
 
 - Art of Layout is Eular's path and stick diagram.
 
-<img src="images/euler_path.png">
+![](images/euler_path.png)
 
 - In Layout Design first step is to get the logic implemented with the help of nmos and pmos transistors and get get a nmos and pmos nework graph out of our design and obtain the Eular's path(path wich has been traced only once) and then go for stick diagram out of it.
 
@@ -329,13 +334,13 @@ Next step after we get the extracted netlist and layout of the standard cell is 
       7. Provide the necessary output capacitances
       8. Prove the necessary simulation commands
 
-<img src="images/character1.png">
+![](images/character1.png)
 
-<img src="images/character2.png">
+![](images/character2.png)
 
 Next step is to feed in all these inputs from 1 to 8 as in form of a configuration file to the characterization software called as **GUNA** and this software will generate timing, noise and power models.
 
-<img src="images/guna.png">
+![](images/guna.png)
 
 The output of GUNA (.lib files) are characterized as Timing Characterization, Power Characterization and Noise Characterization.
 
@@ -345,11 +350,11 @@ The timing parameters are listed below. Two inverters are connected in series, c
 
 **Propagation Delay and Transition Time**
 
-<img src="images/pd_and_tt.png">
+![](images/pd_and_tt.png)
 
 Timing parameters for rise and fall propagation delay are derived from below graphs:
 
-<img src="images/pd.png">
+![](images/pd.png)
 
 - **Propogation Delay** is defined as time {(out_thr)-time(in_thr)}.
 
@@ -367,7 +372,7 @@ On OpenLANE, configurations can be modified while in flight. On OpenLANE, for in
 
 **SPICE Deck Creation for CMOS Inverter**
 
-<img src="images/spice1.png">
+![](images/spice1.png)
 
 **The steps to simulate in SPICE:**
 
@@ -389,15 +394,15 @@ Magic Tool offers a very user-friendly interface for designing the different lay
 
 The command to view the inverter cell in magic is:
 
-<img src="images/inverter magic command.png">
+![](images/inverter_magic_command.png)
 
 **Layout of the CMOS Inveter in magic**
 
-<img src="images/inverter magic.png">
+![](images/inverter_magic.png)
 
 To know about the particular block in layout, Select the particular block and type 'what' in the "tkcon main" window.
 
-<img src="images/what_tkcon.png">
+![](images/what_tkcon.png)
 
 For more information refer this repository: https://github.com/nickson-jose/vsdstdcelldesign
 
@@ -411,21 +416,21 @@ To get the slew rate and propagation delay of the CMOS Inverter we need to plot 
 
 - Use this command 'ext2spice cthresh 0 rthresh 0' then 'ext2spice' to create the '.spice' file from '.ext' file, to be used with our ngspice tool and also extrace all the parasitic capacitances.
 
-<img src="images/ext2spice.png">
+![](images/ext2spice.png)
 
 **sky130_inv.spice** file extraced from magic:
 
-<img src="images/sky130_invspice.png">
+![](images/sky130_invspice.png)
 
 We then modify the 'sky130_inv.spice' file as shown below to be able to plot a transient response:
 
-<img src="images/spicemodified.png">
+![](images/spicemodified.png)
 
 **ngspice Simulation Plots**
 
-<img src="images/ngspice1.png">
+![](images/ngspice1.png)
 
-<img src="images/transient.png">
+![](images/transient.png)
 
 Using this transient response, we will now characterize the cell's slew rate and propagation delay:
 
@@ -453,7 +458,7 @@ So till now we are done with the design setup, the floorplan, placement and last
 
 - '.lef' file {Library Exchange Format (LEF)} is a specification for representing the physical layout of an integrated circuit in an ASCII format. It includes design rules and abstract information about the standard cells.LEF only has the basic information required at that level to serve the purpose of the concerned CAD tool. It helps in saving valuable resources by providing only an abstract view and thus consuming less memory overhead. LEF is used in conjunction with Design Exchange Format (DEF) to represent the complete physical layout of an integrated circuit while it is being designed.
 
-<img src="images/lef.png">
+![](images/lef.png)
 
 So next we will extrace a '.lef' file out of this '.mag' file(designed by us) and then we will plug this lef file into the picorv32a flow (till now we were working with pre-built cells). But first, we must follow to the PnR tool's instructions for standard cells:
 
@@ -465,7 +470,7 @@ To check these guidelines, we need to change the grid of Magic to match the actu
 
 - In the tkcon terminal, use the 'grid' command to match the track information.
 
-<img src="images/grid_cmd.png">
+![](images/grid_cmd.png)
 
 - The grids indicate the only locations for the local-internet layer routing, and the wire pitch needed is indicated by the distance between grid lines. The following demonstrates that the requirements are met.
 
@@ -477,7 +482,7 @@ To check these guidelines, we need to change the grid of Magic to match the actu
 
 - Then, on the tkcon terminal, type lef write and a lef file with the same name as the mag file sky130_myinverter.lef will be produced.
 
-<img src="images/lef_save.png">
+![](images/lef_save.png)
 
 **Plug-in the Customized Inverter Cell (lef file) to OpenLane:**
 
@@ -488,7 +493,7 @@ To check these guidelines, we need to change the grid of Magic to match the actu
 
 - Modify the 'config.tcl' file in the 'picorv32a' folder as follows
 
-<img src="images/pico_configtcl.png">
+![](images/pico_configtcl.png)
 
 - Run docker and prepare the design picorv32a. Plug the new lef file to the OpenLANE flow via:
 
@@ -499,6 +504,124 @@ To check these guidelines, we need to change the grid of Magic to match the actu
 
 - Open the magic tool with 'picorv32a.placement.def' as the def input to see the inverter cell in the placed netlist.
 
-<img src="images/inv_included.png">
+![](images/inv_included.png)
 
-<img src="images/invincluded.png">
+![](images/invincluded.png)
+
+## CTS Using TritonCTS
+
+We already achieved zero worst negative slack and zero total negative slack. Hence we can confirm that setup time has been met so we go for Clock Tree Synthesis.
+
+Use **'run_cts'** command in openlane to run clock tree synthesis.
+
+![](images/cts.png)
+
+The above command will create **'picorv32a.cts.def'** and **'picorv32a.cts.def.png'** at **'/home/neerajcher/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/new_run/results/cts/'**
+
+![](images/cts_pic.png)
+
+# Day 5
+
+## Generating Power Distribution Network
+
+Next in the flow is generating PDN (Power Distribution Network) use **'gen_pdn'** (this we do in floorplanning but in openlane its done after clock tree synthesis).
+
+![](images/pdn.png)
+
+The pdn.def file is generated at
+**'/home/neerajcher/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/new_run/results/floorplan/'**
+
+## Routing using FastRoute and TritonRoute
+
+For routing the design, simply run **'run_routing'** in OpenLANE. This will do both global (using FastRoute) and detailed routing (using TritonRoute), this will take multiple optimization iterations until the DRC violations are reduced to zero. The zeroth iteration has 23692 violations and only at the 17th iteration was all violations solved out of a total of 57 optimization iterations. The whole routing took 45 minutes 19 seconds.
+
+A fun fact: The die area is just 584um x 595um but the total wirelength used for routing spans to 1.3327 m!!!
+
+The following are the sub-steps during global routing:
+
+    1. Maze Routing
+      (i)   First L Route
+      (ii)  Second L Route
+      (iii) First Z Route
+      (iv)  LV Routing
+    2. Layer Assignment
+    3. Post-Processing
+    4. Via Filling
+    5. Antenna Repairs
+
+![](images/globalRoute.png)
+
+Next is the Detailed routing using TritonCTS
+
+![](images/detailed1.png)
+
+![](images/detailed2.png)
+
+![](images/detailed3.png)
+
+![](images/detailed4.png)
+
+Below is the .png image generated after detailed routing.
+
+![](images/detailed5.png)
+
+In the new OpenLANE flow, the SPEF extraction is done withing the routing stage.
+
+![](images/spef.png)
+
+Finally, the Static Timing Analysis reports zero worst negative slack and total negative slack after routing as shown below:
+
+![](images/sta.png)
+
+Finally, run the command **'run_magic'** in the openlane to generate gds file.
+
+![](images/gds.png)
+
+![](images/gds2.png)
+
+Finally, listing down all the commands in OpenLANE:
+
+    -  ./flow.tcl -interactive (Start the OpenLANE Flow)
+    -  package require openlane 0.9
+    -  prep -design picorv32a
+    -  echo $::env ([Varible])
+    -  set ::env(SYNTH_STRATEGY) "DELAY 0"
+    -  run_synthesis
+    -  init_floorplan
+    -  place_io
+    -  global_placement_or
+    -  detailed_placement
+    -  tap_decap_or
+    -  detailed_placement
+    -  run_cts
+    -  gen_pdn
+    -  run_routing
+    -  run_magic
+
+# References
+
+- [Advanced Physical Design using OpenLANE/Sky130](https://www.vlsisystemdesign.com/advanced-physical-design-using-openlane-sky130/?awt_a=5L_6&awt_l=H2Nw0&awt_m=3dG.7I1RDUA8._6)
+
+- [ABC](http://people.eecs.berkeley.edu/~alanmi/abc/)
+
+- [The OpenLane Documentation](https://openlane.readthedocs.io/en/latest/)
+
+- [OpenLane GitHub page by efabless](https://github.com/efabless/openlane)
+
+- [Building an Inverter from Scratch](https://github.com/nickson-jose/vsdstdcelldesign)
+
+- [VSDFlow Tools Installation Guide by Kunal](https://github.com/kunalg123/vsdflow)
+
+- [Tools Installation Guide by Dantu Nandini Devi](https://github.com/DantuNandiniDevi/iiitb_freqdiv#openlane-installation)
+
+- [MAGIC Documentation](http://opencircuitdesign.com/magic)
+
+- [Skywater PDK Documentation](https://skywater-pdk.readthedocs.io/en/main/)
+
+- [Reference Repo](https://github.com/AngeloJacobo/OpenLANE-Sky130-Physical-Design-Workshop#placement-stage)
+
+# Acknowledgements
+
+Finally, I would like to express my sincere gratitude to Kunal Ghosh {Co-founder of VLSI System Design (VSD) Corp. Pvt. Ltd.} and Nickson Jose, ASIC Physical Design Engineer for tremendous assistance in planning and presenting this workshop on Advanced-Physical-Design-using-OpenLane-SKY130. The workshop was well designed This workshop taught me a lot of new things about the design of RISC-V processor in OpenLANE and Physical Design in general.
+
+Get in touch with me @[LinkedIn](https://www.linkedin.com/in/neeraj-cheryala)
